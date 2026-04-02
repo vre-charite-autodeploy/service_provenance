@@ -18,10 +18,7 @@
 # permissions and limitations under the Licence.
 # 
 
-FROM python:3.7-buster
-
-ARG PIP_USERNAME
-ARG PIP_PASSWORD
+FROM python:3.8
 
 WORKDIR /usr/src/app
 
@@ -30,11 +27,9 @@ ENV TZ=UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && apt-get update && \
 apt-get install -y vim-tiny less && ln -s /usr/bin/vim.tiny /usr/bin/vim && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt ./
-COPY internal_requirements.txt ./
-
-RUN PIP_USERNAME=$PIP_USERNAME PIP_PASSWORD=$PIP_PASSWORD pip install --no-cache-dir -r requirements.txt -r internal_requirements.txt 
-
 COPY . .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
 RUN chmod +x gunicorn_starter.sh
 CMD ["./gunicorn_starter.sh"]
